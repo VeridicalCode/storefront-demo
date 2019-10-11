@@ -54,14 +54,13 @@ function promptUserAction() {
                 [{ item_id: answer.itemID }]
                 , function (err, results) {
                     if (err) throw err;
-                    let currentStock = results[i].stock_quantity;
+                    let currentStock = results.stock_quantity;
 
-                    results[i].whatever
                     if (answer.quantity > currentStock) {
-                        console.log(`We're sorry, we don't currently have that many ${results[i].product_name} in stock.`);
+                        console.log(`We're sorry, we don't currently have that many ${results.product_name} in stock.`);
                     }
                     else {
-                        let totalprice = answer.quantity * results[i].price;
+                        let totalprice = answer.quantity * results.price;
                         console.log(`Thank you for your purchase! ${totalprice} will be deducted from your account.`);
                         printStorefront();
                         finalizeItemPurchase(answer.itemID, answer.quantity, currentStock);
