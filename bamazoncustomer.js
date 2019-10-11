@@ -30,7 +30,11 @@ function printStorefront() {
     // query database for available products, print in default format
     connection.query("SELECT * FROM products", function (err, results) {
         if (err) throw err;
-        console.log(results);
+        for (let i = 0 ; i < results.length; i++) {
+            console.log(
+                `Item # ${results[i].item_id}: ${results[i].product_name}, Price: $${results[i].price}. ${results[i].stock_quantity} left in stock.`
+            )
+        }
         promptUserAction();
     })
 }
@@ -38,7 +42,7 @@ function printStorefront() {
 
 // function which asks the user what they want to buy & how much
 function promptUserAction() {
-    inquirer.prompt({
+    inquirer.prompt([{
         name: 'itemID',
         type: 'number',
         message: `\nPlease type the unique ID of the item you'd like to purchase.`
@@ -47,7 +51,7 @@ function promptUserAction() {
             name: 'quantity',
             type: 'number',
             message: 'How many would you like to purchase?'
-        })
+        }])
         .then(function (answer) {
             // query SQL for that specific item
             connection.query("SELECT * FROM products WHERE ?",
