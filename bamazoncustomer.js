@@ -1,13 +1,13 @@
 // require modules
 const mysql = require('mysql');
 const inquirer = require('inquirer');
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 
 // pass in password from dotenv
-const PASSWORD = dotenv.ENV_PASS;
+const PASSWORD = process.env.DB_PASS;
 
 // connect to SQL
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
@@ -52,22 +52,24 @@ function promptUserAction() {
         }
     ]).then(
             function (inquirerResponse) {
-            console.log(`inside promptUserAction async`);
             // query SQL for that specific item
-            connection.query("SELECT * FROM products WHERE ?",
-                [{ item_id: inquirerResponse.itemID }]
-                , function (err, results) {
+            connection.query(`SELECT * FROM products WHERE item_id=${inquirerResponse.itemID}`,
+                function (err, SQLresults) {
                     if (err) throw err;
-                    let currentStock = inquirerResponse.stock_quantity;
+                    // very wet to declare all these variables but we'll do it anyway for clarity
+                    console.log(SQLresults[0]);
+                    let currentStock = SQLresults[0].stock_quantity;
+                    let productName = SQLresults[0].product_name;
+                    let productPrice = SQLresults[0].price;
+                    let numberBought = inquirerResponse.quantity;
 
-                    if (inquirerResponse.quantity > currentStock) {
-                        console.log(`We're sorry, we don't currently have that many ${inquirerResponse.product_name} in stock.`);
+                    if (numberBought > currentStock) { // make sure we have enough
+                        console.log(`We're sorry, we don't currently have that many ${productName} in stock.`);
                     }
                     else {
-                        let totalprice = inquirerResponse.quantity * results.price;
+                        let totalprice = productPrice * numberBought;
                         console.log(`Thank you for your purchase! ${totalprice} will be deducted from your account.`);
-                        printStorefront();
-                        finalizeItemPurchase(inquirerResponse.itemID, inquirerResponse.quantity, currentStock);
+                        finalizeItemPurchase(inquirerResponse.itemID, numberBought, currentStock); // send off to purchase function
                     }
                 })
         });
@@ -75,11 +77,12 @@ function promptUserAction() {
 
 // function to deduct product from SQL server
 function finalizeItemPurchase(itemID, quantity, stock) {
-    let newQuantity = stock - quantity;
-    connection.query("SET ? FROM products WHERE ?",
+    let newQuantity = stock - quantity; // target value is current stock minus purchase
+    connection.query("UPDATE products SET ? WHERE ?",
     [{stock_quantity:newQuantity},{item_id:itemID}],
     function(err){
         if (err) throw (err)
     })
+    printStorefront(); 
 }
 
