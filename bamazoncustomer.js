@@ -1,13 +1,10 @@
 // require modules
 const mysql = require('mysql');
 const inquirer = require('inquirer');
-require('dotenv').config();
+const dotenv = require('dotenv').config();
 
 // pass in password from dotenv
-const db = require('db')
-db.connect({
-    PASSWORD: process.env.DB_PASS
-})
+const PASSWORD = dotenv.ENV_PASS;
 
 // connect to SQL
 var connection = mysql.createConnection({
