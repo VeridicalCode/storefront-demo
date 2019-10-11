@@ -39,32 +39,35 @@ function printStorefront() {
 
 // function which asks the user what they want to buy & how much
 function promptUserAction() {
-    inquirer.prompt([{
+    inquirer.prompt([
+        {
         name: 'itemID',
         type: 'number',
         message: `\nPlease type the unique ID of the item you'd like to purchase.`
-    },
+        },
         {
             name: 'quantity',
             type: 'number',
             message: 'How many would you like to purchase?'
-        }])
-        .then(function (answer) {
+        }
+    ]).then(
+            function (inquirerResponse) {
+            console.log(`inside promptUserAction async`);
             // query SQL for that specific item
             connection.query("SELECT * FROM products WHERE ?",
-                [{ item_id: answer.itemID }]
+                [{ item_id: inquirerResponse.itemID }]
                 , function (err, results) {
                     if (err) throw err;
-                    let currentStock = results.stock_quantity;
+                    let currentStock = inquirerResponse.stock_quantity;
 
-                    if (answer.quantity > currentStock) {
-                        console.log(`We're sorry, we don't currently have that many ${results.product_name} in stock.`);
+                    if (inquirerResponse.quantity > currentStock) {
+                        console.log(`We're sorry, we don't currently have that many ${inquirerResponse.product_name} in stock.`);
                     }
                     else {
-                        let totalprice = answer.quantity * results.price;
+                        let totalprice = inquirerResponse.quantity * results.price;
                         console.log(`Thank you for your purchase! ${totalprice} will be deducted from your account.`);
                         printStorefront();
-                        finalizeItemPurchase(answer.itemID, answer.quantity, currentStock);
+                        finalizeItemPurchase(inquirerResponse.itemID, inquirerResponse.quantity, currentStock);
                     }
                 })
         });
