@@ -3,13 +3,14 @@ const mysql = require('mysql');
 const inquirer = require('inquirer');
 require('dotenv').config();
 
-// pass in password from dotenv
+// pass in vars from dotenv
 const PASSWORD = process.env.DB_PASS;
+const PORT = process.env.PORT;
 
 // connect to SQL
 const connection = mysql.createConnection({
     host: 'localhost',
-    port: 3306,
+    port: PORT,
     user: 'root',
     password: PASSWORD,
     database: 'bamazon'
