@@ -8,7 +8,7 @@ You'll need to install several packages first - inquirer and mySQL are both requ
 
 Once all the requirements are present, simply running the file in node should automatically lead you through the process, displaying any local store data and allowing the user to buy whatever they'd like.
 
-[running the app](./assets/screen 9.png)
+[running the app](/assets/screen 9.png)
 
 ## Who Made It?
 Scripting by Mars Getsoian, concept and package research by Trinity Coding Bootcamp.
