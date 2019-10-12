@@ -57,7 +57,6 @@ function promptUserAction() {
                 function (err, SQLresults) {
                     if (err) throw err;
                     // very wet to declare all these variables but we'll do it anyway for clarity
-                    console.log(SQLresults[0]);
                     let currentStock = SQLresults[0].stock_quantity;
                     let productName = SQLresults[0].product_name;
                     let productPrice = SQLresults[0].price;
